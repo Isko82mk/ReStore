@@ -14,10 +14,13 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 
-builder.Services.AddDbContext<StoreContext>(opt=>{
+builder.Services.AddDbContext<StoreContext>(opt =>
+{
     opt.UseSqlite(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+//Cors service
+builder.Services.AddCors();
 
 var app = builder.Build();
 
@@ -28,10 +31,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-//app.UseHttpsRedirection();
 
+
+app.UseCors(opt =>
+{
+    opt.AllowAnyHeader().AllowAnyMethod().WithOrigins("http://localhost:3000");
+});
 app.UseAuthorization();
-
 app.MapControllers();
 
 // init database
@@ -45,8 +51,8 @@ try
 }
 catch (Exception ex)
 {
-    logger.LogError(ex,"Problem during migratin");
-    
+    logger.LogError(ex, "Problem during migratin");
+
 }
 
 //

@@ -1,5 +1,5 @@
 import "../../app/layout/styles.css";
-import Catalog from "../../feature/catalog/Catalog";
+
 import {
   Container,
   CssBaseline,

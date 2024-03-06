@@ -8,6 +8,7 @@ import {
 } from "@mui/material";
 import Header from "./Header";
 import { useState } from "react";
+import { Outlet } from "react-router-dom";
 
 function App() {
   const [darkMode, setDarkMode] = useState(false);
@@ -32,7 +33,10 @@ function App() {
       <CssBaseline />
       <Header dark={darkMode} onChangeHandler={handleChange} />
       <Container>
-        <Catalog />
+        {/* <Catalog /> */}
+
+        {/* using outlet when using route */}
+        <Outlet />
       </Container>
     </ThemeProvider>
   );

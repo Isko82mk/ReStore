@@ -20,7 +20,7 @@ namespace API.Enteties
             }
 
 
-            BasketItem existingItem = Items.FirstOrDefault(item => item.Id == product.Id);
+            BasketItem existingItem = Items.FirstOrDefault(item => item.ProductId == product.Id);
             if (existingItem != null) existingItem.Quantity += quantity;
 
         }

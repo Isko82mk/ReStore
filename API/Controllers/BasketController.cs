@@ -14,30 +14,19 @@ namespace API.Controllers
             _context = context;
         }
 
-        [HttpGet]
+        [HttpGet(Name = "GetBasket")]
         public async Task<ActionResult<BasketDTO>> GetBasket()
         {
             Basket basket = await RetriveBasket();
 
             if (basket == null) return NotFound();
-            return new BasketDTO
-            {
-                Id = basket.Id,
-                BuyerId = basket.BuyerId,
-                Items = basket.Items.Select(item => new BasketItemDto
-                {
-                    ProductId = item.ProductId,
-                    Brand = item.Product.Brand,
-                    Name = item.Product.Name,
-                    PictureUrl = item.Product.PictureUrl,
-                    Price = item.Product.Price,
-                    Quantity = item.Quantity,
-                    Type = item.Product.Type
-                }).ToList()
-            };
+            return MapBasketToDTO(basket);
         }
+
+
+
         [HttpPost] //api/basket?productId=3&quantity=3
-        public async Task<ActionResult> AddItemToBasket(int productId, int quantity)
+        public async Task<ActionResult<BasketDTO>> AddItemToBasket(int productId, int quantity)
         {
             //get basket or create basket
             Basket basket = await RetriveBasket() ?? CreateNewBasket();
@@ -48,7 +37,7 @@ namespace API.Controllers
 
             bool result = await _context.SaveChangesAsync() > 0;
 
-            if (result) return StatusCode(201);
+            if (result) return CreatedAtRoute("GetBasket", MapBasketToDTO(basket));
             return BadRequest(new ProblemDetails { Title = "Problem saving item in the basket" });
 
         }
@@ -84,6 +73,25 @@ namespace API.Controllers
             var basket = new Basket { BuyerId = buyerId };
             _context.Baskets.Add(basket);
             return basket;
+        }
+
+        private static BasketDTO MapBasketToDTO(Basket basket)
+        {
+            return new BasketDTO
+            {
+                Id = basket.Id,
+                BuyerId = basket.BuyerId,
+                Items = basket.Items.Select(item => new BasketItemDto
+                {
+                    ProductId = item.ProductId,
+                    Brand = item.Product.Brand,
+                    Name = item.Product.Name,
+                    PictureUrl = item.Product.PictureUrl,
+                    Price = item.Product.Price,
+                    Quantity = item.Quantity,
+                    Type = item.Product.Type
+                }).ToList()
+            };
         }
 
     }
